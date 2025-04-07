@@ -1,0 +1,21 @@
+﻿{
+    "quizTitle": "Título legal",
+    "quizDescription": "descrição",
+    "questions": [
+        {
+            "title": "é né?",
+            "pointValue": 1,
+            "correctAnswersValue": [ "first" ],
+            "whenRight": "acertou, mizeravi",
+            "whenWrong": "errou, mizeravi",
+            "questionType": "RADIO",
+            "options": [
+                "first",
+                "second",
+                "third",
+                "fourth",
+                "fifth"
+            ]
+        }
+    ]
+}
