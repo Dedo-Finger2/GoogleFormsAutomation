@@ -8,5 +8,7 @@ namespace GoogleFormsAutomation.App.DTOs
         public string Title { get; set; }
         [JsonPropertyName("quizDescription")]
         public string? Description { get; set; }
+        [JsonPropertyName("questions")]
+        public QuizQuestionJsonDTO[] Questions { get; set; }
     }
 }
