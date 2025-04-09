@@ -10,10 +10,8 @@ namespace GoogleFormsAutomation.App.Utils
 {
     public class GoogleFormsAPIService
     {
-        public UserCredential userCredentials;
-        public FormsService formService;
-
-        public GoogleFormsAPIService() { }
+        private UserCredential userCredentials;
+        private FormsService formService;
 
         public async void RegisterCredentials(string credentialsJsonFilePath)
         {
