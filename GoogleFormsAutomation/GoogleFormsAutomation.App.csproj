@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+    <PackageReference Include="Google.Apis.Forms.v1" Version="1.69.0.3715" />
+    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.68.0.1869" />
+  </ItemGroup>
+
 </Project>
