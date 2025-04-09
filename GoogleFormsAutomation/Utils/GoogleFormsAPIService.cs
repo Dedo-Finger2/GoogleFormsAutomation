@@ -1,5 +1,6 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Forms.v1;
+using Google.Apis.Services;
 using GoogleFormsAutomation.App.Exceptions;
 
 namespace GoogleFormsAutomation.App.Utils
@@ -7,6 +8,7 @@ namespace GoogleFormsAutomation.App.Utils
     public class GoogleFormsAPIService
     {
         public UserCredential userCredentials;
+        public FormsService formService;
 
         public GoogleFormsAPIService() { }
 
@@ -22,6 +24,15 @@ namespace GoogleFormsAutomation.App.Utils
             {
                 this.userCredentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(GoogleClientSecrets.FromStream(stream).Secrets, new[] { FormsService.Scope.FormsBody }, "user", CancellationToken.None);
             }
+        }
+
+        public void SetupFormService(string appName = "FormCreationApp")
+        {
+            this.formService = new FormsService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = this.userCredentials,
+                ApplicationName = appName
+            });
         }
     }
 }
