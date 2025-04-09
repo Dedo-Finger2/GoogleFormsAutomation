@@ -1,18 +1,20 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using GoogleFormsAutomation.App.DTOs;
+using GoogleFormsAutomation.App.Exceptions;
 
 namespace GoogleFormsAutomation.App.Utils
 {
     public static class MyJsonService
     {
-        public static QuizJsonDTO? GetConvertedJsonToDTO(string filePath)
+        public static QuizJsonDTO GetConvertedJsonToDTO(string filePath)
         {
-            var jsonFileExists = File.Exists(filePath);
+            var jsonFileDoesNotExists = !File.Exists(filePath);
             var jsonFilePathIsEmpty = filePath.Trim() == string.Empty;
 
-            if (!jsonFileExists || jsonFilePathIsEmpty) throw new Exception("json file was not found");
-
+            if (jsonFilePathIsEmpty) throw new EmptyJsonFilePathException();
+            if (jsonFileDoesNotExists) throw new ResourceNotFoundException($"json file not found at {filePath}");
+            
             QuizJsonDTO? dto = new();
 
             using (var r = new StreamReader(filePath))
@@ -30,7 +32,7 @@ namespace GoogleFormsAutomation.App.Utils
                 dto = JsonSerializer.Deserialize<QuizJsonDTO>(content, options);
             }
 
-            if (dto == null) throw new Exception("error trying to parse json content into dto");
+            if (dto == null) throw new JsonFileMalformedException();
 
             return dto;
         }
