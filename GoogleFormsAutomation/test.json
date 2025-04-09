@@ -1,11 +1,41 @@
 ﻿{
-    "quizTitle": "Título legal",
+    "quizTitle": "Os fundamentos do C#",
     "quizDescription": "descrição",
     "questions": [
         {
             "title": "é né?",
             "pointValue": 1,
             "correctAnswersValue": [ "first" ],
+            "whenRight": "acertou, mizeravi",
+            "whenWrong": "errou, mizeravi",
+            "questionType": "RADIO",
+            "options": [
+                "first",
+                "second",
+                "third",
+                "fourth",
+                "fifth"
+            ]
+        },
+        {
+            "title": "é né?2",
+            "pointValue": 1,
+            "correctAnswersValue": [ "third" ],
+            "whenRight": "acertou, mizeravi",
+            "whenWrong": "errou, mizeravi",
+            "questionType": "RADIO",
+            "options": [
+                "first",
+                "second",
+                "third",
+                "fourth",
+                "fifth"
+            ]
+        },
+        {
+            "title": "é né?3",
+            "pointValue": 1,
+            "correctAnswersValue": [ "fourth" ],
             "whenRight": "acertou, mizeravi",
             "whenWrong": "errou, mizeravi",
             "questionType": "RADIO",
