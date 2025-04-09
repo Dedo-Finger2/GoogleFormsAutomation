@@ -6,6 +6,7 @@ using Google.Apis.Forms.v1;
 using Google.Apis.Forms.v1.Data;
 using Google.Apis.Services;
 using GoogleFormsAutomation.App.DTOs;
+using GoogleFormsAutomation.App.Utils;
 
 namespace GoogleFormsAutomation.App
 {
@@ -13,154 +14,143 @@ namespace GoogleFormsAutomation.App
     {
         public static async Task Main(string[] args)
         {
-            string? jsonFilePath;
-
-            do
+            try
             {
-                Console.Write("Path: ");
-                jsonFilePath = Console.ReadLine();
-            } while (jsonFilePath == null || jsonFilePath == string.Empty);
+                string? jsonFilePath;
 
-            QuizJsonDTO? dto = new();
-
-            using (StreamReader r = new(jsonFilePath))
-            {
-                string jsonData = r.ReadToEnd();
-
-                JsonSerializerOptions options = new JsonSerializerOptions
+                do
                 {
-                    Converters =
-                    {
-                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-                    }
-                };
+                    Console.Write("Path: ");
+                    jsonFilePath = Console.ReadLine();
+                } while (jsonFilePath == null || jsonFilePath == string.Empty);
 
-                dto = JsonSerializer.Deserialize<QuizJsonDTO>(jsonData, options);
-            }
+                var dto = MyJsonService.GetConvertedJsonToDTO(jsonFilePath);
 
-            if (dto == null) return;
+                Console.WriteLine(dto.Questions[0].Title);
 
-            Console.WriteLine(dto.Questions[0].Title);
-
-            UserCredential credential;
-            using (FileStream stream = new("credentials.json", FileMode.Open, FileAccess.Read))
-            {
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(GoogleClientSecrets.FromStream(stream).Secrets, new[] { FormsService.Scope.FormsBody }, "user", CancellationToken.None);
-            }
-
-            FormsService service = new FormsService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = "FormCreationAPp"
-            });
-
-            Form form = new Form
-            {
-                Info = new Info
+                UserCredential credential;
+                using (FileStream stream = new("credentials.json", FileMode.Open, FileAccess.Read))
                 {
-                    Title = dto.Title,
-                    DocumentTitle = dto.Title
+                    credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(GoogleClientSecrets.FromStream(stream).Secrets, new[] { FormsService.Scope.FormsBody }, "user", CancellationToken.None);
                 }
-            };
 
-            Form? createdForm = await service.Forms.Create(form).ExecuteAsync();
-            Console.WriteLine($"Formulário criado! Link de edição: https://docs.google.com/forms/d/{createdForm.FormId}/edit");
+                FormsService service = new FormsService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "FormCreationAPp"
+                });
 
-            BatchUpdateFormRequest request = new BatchUpdateFormRequest
-            {
-                Requests = [],
-            };
-
-            request.Requests.Add(new Request
-            {
-                UpdateFormInfo = new UpdateFormInfoRequest
+                Form form = new Form
                 {
                     Info = new Info
                     {
-                        Description = dto.Description
-                    },
-                    UpdateMask = "description"
-                }
-            });
-
-            request.Requests.Add(new Request
-            {
-                UpdateSettings = new UpdateSettingsRequest
-                {
-                    Settings = new FormSettings
-                    {
-                        QuizSettings = new QuizSettings
-                        {
-                            IsQuiz = true
-                        }
-                    },
-                    UpdateMask = "quizSettings.isQuiz"
-                }
-            });
-
-            for (int i = 0; i < dto.Questions.Length; i++)
-            {
-                List<Option> options = new();
-                foreach (string option in dto.Questions[i].Options)
-                {
-                    options.Add(new Option { Value = option });
-                }
-
-                List<CorrectAnswer> correctAnswers = new();
-                foreach (string correctAnswer in dto.Questions[i].CorrectAnswers)
-                {
-                    correctAnswers.Add(new CorrectAnswer { Value = correctAnswer });
-                }
-
-                Request requestitem = new Request
-                {
-                    CreateItem = new CreateItemRequest
-                    {
-                        Item = new Item
-                        {
-                            Title = dto.Questions[i].Title,
-                            QuestionItem = new QuestionItem
-                            {
-                                Question = new Question
-                                {
-                                    Required = true,
-                                    ChoiceQuestion = new ChoiceQuestion
-                                    {
-                                        Type = dto.Questions[i].QuestionType.ToString(),
-                                        Options = options,
-                                        Shuffle = true
-                                    },
-                                    Grading = new Grading
-                                    {
-                                        PointValue = dto.Questions[i].Points,
-                                        CorrectAnswers = new CorrectAnswers
-                                        {
-                                            Answers = correctAnswers,
-                                        },
-                                        WhenRight = new Feedback
-                                        {
-                                            Text = dto.Questions[i].TextWhenWrong
-                                        },
-                                        WhenWrong = new Feedback
-                                        {
-                                            Text = dto.Questions[i].TextWhenWrong
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        Location = new Location
-                        {
-                            Index = i
-                        }
+                        Title = dto.Title,
+                        DocumentTitle = dto.Title
                     }
                 };
 
-                request.Requests.Add(requestitem);
-            }
+                Form? createdForm = await service.Forms.Create(form).ExecuteAsync();
+                Console.WriteLine($"Formulário criado! Link de edição: https://docs.google.com/forms/d/{createdForm.FormId}/edit");
 
-            await service.Forms.BatchUpdate(request, createdForm.FormId).ExecuteAsync();
-            Console.WriteLine("Perguntas adicionadas!");
+                BatchUpdateFormRequest request = new BatchUpdateFormRequest
+                {
+                    Requests = [],
+                };
+
+                request.Requests.Add(new Request
+                {
+                    UpdateFormInfo = new UpdateFormInfoRequest
+                    {
+                        Info = new Info
+                        {
+                            Description = dto.Description
+                        },
+                        UpdateMask = "description"
+                    }
+                });
+
+                request.Requests.Add(new Request
+                {
+                    UpdateSettings = new UpdateSettingsRequest
+                    {
+                        Settings = new FormSettings
+                        {
+                            QuizSettings = new QuizSettings
+                            {
+                                IsQuiz = true
+                            }
+                        },
+                        UpdateMask = "quizSettings.isQuiz"
+                    }
+                });
+
+                for (int i = 0; i < dto.Questions.Length; i++)
+                {
+                    List<Option> options = new();
+                    foreach (string option in dto.Questions[i].Options)
+                    {
+                        options.Add(new Option { Value = option });
+                    }
+
+                    List<CorrectAnswer> correctAnswers = new();
+                    foreach (string correctAnswer in dto.Questions[i].CorrectAnswers)
+                    {
+                        correctAnswers.Add(new CorrectAnswer { Value = correctAnswer });
+                    }
+
+                    Request requestitem = new Request
+                    {
+                        CreateItem = new CreateItemRequest
+                        {
+                            Item = new Item
+                            {
+                                Title = dto.Questions[i].Title,
+                                QuestionItem = new QuestionItem
+                                {
+                                    Question = new Question
+                                    {
+                                        Required = true,
+                                        ChoiceQuestion = new ChoiceQuestion
+                                        {
+                                            Type = dto.Questions[i].QuestionType.ToString(),
+                                            Options = options,
+                                            Shuffle = true
+                                        },
+                                        Grading = new Grading
+                                        {
+                                            PointValue = dto.Questions[i].Points,
+                                            CorrectAnswers = new CorrectAnswers
+                                            {
+                                                Answers = correctAnswers,
+                                            },
+                                            WhenRight = new Feedback
+                                            {
+                                                Text = dto.Questions[i].TextWhenWrong
+                                            },
+                                            WhenWrong = new Feedback
+                                            {
+                                                Text = dto.Questions[i].TextWhenWrong
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            Location = new Location
+                            {
+                                Index = i
+                            }
+                        }
+                    };
+
+                    request.Requests.Add(requestitem);
+                }
+
+                await service.Forms.BatchUpdate(request, createdForm.FormId).ExecuteAsync();
+                Console.WriteLine("Perguntas adicionadas!");
+            } catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }
