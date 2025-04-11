@@ -24,7 +24,7 @@ namespace GoogleFormsAutomation.App
                     
                     Program.ShowMainMenu();
 
-                    Console.Write("Path: ");
+                    Console.Write("File Path: ");
                     
                     jsonFilePath = Console.ReadLine();
                 } while (jsonFilePath == null || jsonFilePath == string.Empty);
