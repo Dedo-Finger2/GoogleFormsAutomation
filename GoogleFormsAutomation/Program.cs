@@ -20,7 +20,12 @@ namespace GoogleFormsAutomation.App
 
                 do
                 {
+                    Console.Clear();
+                    
+                    Program.ShowMainMenu();
+
                     Console.Write("Path: ");
+                    
                     jsonFilePath = Console.ReadLine();
                 } while (jsonFilePath == null || jsonFilePath == string.Empty);
 
@@ -41,6 +46,13 @@ namespace GoogleFormsAutomation.App
             {
                 Console.WriteLine(e);
             }
+        }
+
+        public static void ShowMainMenu()
+        {
+            Console.WriteLine(string.Concat(Enumerable.Repeat<string>("=", 30)));
+            Console.WriteLine("Google Forms Automation");
+            Console.WriteLine(string.Concat(Enumerable.Repeat<string>("=", 30)));
         }
     }
 }
