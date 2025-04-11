@@ -21,7 +21,7 @@ namespace GoogleFormsAutomation.App
 
             } catch (Exception e)
             {
-                Console.WriteLine(e);
+                MyLogger.Error("something went wrong", e);
             }
         }
 
