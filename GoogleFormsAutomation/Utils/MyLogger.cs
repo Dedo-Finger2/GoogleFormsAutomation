@@ -14,12 +14,11 @@ namespace GoogleFormsAutomation.App.Utils
 
                 Console.WriteLine($"unespected error. please check the log file at '{path}' for more information");
 
-                using (FileStream fs = File.Create(path))
-                {
-                    byte[] content = new UTF8Encoding(true).GetBytes($"[{DateTime.Now}]\n[TYPE]: ERROR\n[MESSAGE]: {message}\n[ERROR MESSAGE]: {e.Message}\n[STACK TRACE]: {e.StackTrace}\n\n");
-                    fs.Write(content, 0, content.Length);
-                }
-            } catch(Exception ex)
+                string content = $"[{DateTime.Now}]\n[TYPE]: ERROR\n[MESSAGE]: {message}\n[ERROR MESSAGE]: {e.Message}\n[STACK TRACE]: {e.StackTrace}\n\n";
+
+                File.AppendAllText(path, content);
+            } 
+            catch(Exception ex)
             {
                 Console.WriteLine($"error trying to write log: {ex}");
             }
@@ -31,11 +30,9 @@ namespace GoogleFormsAutomation.App.Utils
             {
                 string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "google-forms-automation.log");
 
-                using (FileStream fs = File.Create(path))
-                {
-                    byte[] content = new UTF8Encoding(true).GetBytes($"[{DateTime.Now}]\n[TYPE]: WARNING\n[MESSAGE]: {message}\n[ERROR MESSAGE]: {e.Message}\n[STACK TRACE]: {e.StackTrace}\n\n");
-                    fs.Write(content, 0, content.Length);
-                }
+                string content = $"[{DateTime.Now}]\n[TYPE]: WARNING\n[MESSAGE]: {message}\n[ERROR MESSAGE]: {e.Message}\n[STACK TRACE]: {e.StackTrace}\n\n";
+
+                File.AppendAllText(path, content);
             }
             catch (Exception ex)
             {
