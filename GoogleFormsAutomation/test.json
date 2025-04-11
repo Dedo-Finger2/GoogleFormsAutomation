@@ -5,7 +5,7 @@
         {
             "title": "é né?",
             "pointValue": 1,
-            "correctAnswersValue": [ "first" ],
+            "correctAnswersValue": [ "First" ],
             "whenRight": "acertou, mizeravi",
             "whenWrong": "errou, mizeravi",
             "questionType": "RADIO",
