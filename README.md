@@ -138,3 +138,7 @@ Once you have your `credentials.json` and your quiz JSON file:
 1. Place both files in your project directory (same as the binary)
 2. Run the application, providing the path to your quiz JSON file.
 3. The application will create a Google Form based on your JSON structure.
+
+## 📜 License
+
+This project is licensed under the MIT License.
